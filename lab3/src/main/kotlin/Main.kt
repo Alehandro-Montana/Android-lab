@@ -1,60 +1,57 @@
-data class Figure(val width: Int, val height: Int) {
-    private var _area: Int = width*height
-
+data class Figure(val width: Int, val height: Int, private var _area: Int = 0) {
     val area: Int
         get() = _area
-        private set(value) {
-            _area = value
-        }
 
+    private fun calculateArea() {
+        _area = width * height
+    }
+
+    init {
+        calculateArea()
+    }
 }
-
-
-enum class ShapeType {
-    data class R
-    Rectangle, Oval, Line
-}
-
-sealed class Shape
-    data class Rectangle(val width: Int, val height: Int) : Shape()
-    data class Oval(val radiusX: Int, val radiusY: Int) : Shape()
-    data class Line(val length: Int) : Shape()
-    abstract fun draw()
-
-
+//Создал список из дата классов Figure и пересчитал общую сумму полей area в цикле
 fun main() {
     val figures = listOf(
-        Figure(2, 3),
-        Figure(4, 7),
-        Figure(11, 3)
-
+        Figure(3, 4),
+        Figure(5, 6),
+        Figure(7, 8)
     )
 
     var totalArea = 0
     for (figure in figures) {
         totalArea += figure.area
     }
-    println("Total area : $totalArea")
+    println("Total area: $totalArea")
+
+    sealed class Shape
+    data class Rectangle(val width: Int, val height: Int) : Shape()
+    data class Oval(val width: Int, val height: Int) : Shape()
+    data class Line(val length: Int) : Shape()
 
     val shapes = listOf(
-        Shape.Rectangle(),
-        Shape.Oval(),
-        Shape.Line(),
-        Shape.Rectangle(),
-        Shape.Oval()
+        Rectangle(3, 4),
+        Oval(5, 6),
+        Line(7)
     )
 
-    var rectangleCount = 0
-    var ovalCount = 0
-    var lineCount = 0
+    // используем фильты
+    val rectanglesFilter = shapes.filterIsInstance<Rectangle>()
+    val ovalsFilter = shapes.filterIsInstance<Oval>()
+    val linesFilter = shapes.filterIsInstance<Line>()
+    println("Filter results: rectangles=${rectanglesFilter.size}, ovals=${ovalsFilter.size}, lines=${linesFilter.size}")
+
+  
+    var rectangles = 0
+    var ovals = 0
+    var lines = 0
     for (shape in shapes) {
         when (shape) {
-            is Shape.Rectangle -> rectangleCount++
-            is Shape.Oval -> ovalCount++
-            is Shape.Line -> lineCount++
+            is Rectangle -> rectangles++
+            is Oval -> ovals++
+            is Line -> lines++
         }
     }
-    println("Number of Rectangle instances: $rectangleCount")
-    println("Number of Oval instances: $ovalCount")
-    println("Number of Line instances: $lineCount")
+    println("When results: rectangles=$rectangles, ovals=$ovals, lines=$lines")
 }
+
